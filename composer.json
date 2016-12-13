@@ -1,6 +1,6 @@
 {
   "name": "funch/curl",
-  "description": "a tiny curl lib",
+  "description": "a tiny php cURL client",
   "minimum-stability": "dev",
   "license": "MIT",
   "require": {
