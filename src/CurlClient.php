@@ -51,7 +51,7 @@ class CurlClient
 
         if (is_null($url)) throw new InvalidArgumentException('url is null');
         $full_url = self::$baseUrl . $url;
-        $full_url = $query ? (
+        $full_url .= $query ? (
             strpos($full_url, '?') !== false ? '&' : '?'
             ).http_build_query($query) : '';
         $host = parse_url($full_url, PHP_URL_HOST);
