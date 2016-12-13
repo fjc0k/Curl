@@ -1,0 +1,24 @@
+{
+  "name": "funch/curl",
+  "description": "a tiny curl lib",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.6.0",
+    "ext-curl": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^5.7"
+  },
+  "authors": [
+    {
+      "name": "funch",
+      "email": "hello.funch@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Funch\\Curl\\": "src/"
+    }
+  }
+}
