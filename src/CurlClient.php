@@ -45,7 +45,9 @@ class CurlClient
         $files =
             null;
         $follow_location = true;
+
         extract($args);
+
         if (is_null($url)) throw new InvalidArgumentException('url is null');
         $full_url = self::$baseUrl . $url . ($query ? '?'.http_build_query($query) : '');
         $host = parse_url($full_url, PHP_URL_HOST);
