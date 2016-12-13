@@ -25,6 +25,7 @@ class CurlClient
      * @param bool $raw
      * @return mixed
      * @throws CurlException
+     * @throws CurlTimeoutException
      */
     public static function request(array $args, $raw = false)
     {
@@ -140,7 +141,7 @@ class CurlClient
      */
     public static function json(array $args, $raw = false)
     {
-        $res = self::request($args);
+        $res = self::request($args, $raw);
         $json = json_decode($res);
         if (JSON_ERROR_NONE !== json_last_error())
             throw new CurlException('JSON error: ' . json_last_error_msg() . ' (' . $res . ')');
