@@ -159,7 +159,7 @@ class CurlClient
     public static function html(array $args, $raw = false)
     {
         $res = self::request($args, $raw);
-        $html = htmlspecialchars_decode($res);
+        $html = html_entity_decode($res); // fuck!!!
         return $html;
     }
 
