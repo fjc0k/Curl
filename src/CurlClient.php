@@ -151,6 +151,17 @@ class CurlClient
         return $json;
     }
 
+    /**
+     * @param array $args
+     * @param bool $raw
+     * @return string
+     */
+    public static function html(array $args, $raw = false)
+    {
+        $res = self::request($args, $raw);
+        $html = htmlspecialchars_decode($res);
+        return $html;
+    }
 
     /**
      * @param $cookies
