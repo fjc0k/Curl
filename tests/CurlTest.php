@@ -14,6 +14,7 @@ use Funch\Curl\CurlException;
 use Funch\Curl\InvalidArgumentException;
 use Funch\Curl\CurlTimeoutException;
 
+
 class CurlTest extends \PHPUnit_Framework_TestCase
 {
 

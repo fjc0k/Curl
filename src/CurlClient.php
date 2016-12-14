@@ -9,6 +9,7 @@
 namespace Funch\Curl;
 
 use CURLFile;
+use Hoa\Mime\Mime;
 
 class CurlClient
 {
@@ -43,6 +44,7 @@ class CurlClient
         $timeout =
         $proxy =
         $json =
+        $charset =
         $files =
             null;
         $follow_location = true;
@@ -52,8 +54,16 @@ class CurlClient
         if (is_null($url)) throw new InvalidArgumentException('url is null');
         $full_url = self::$baseUrl . $url;
         $full_url .= $query ? (
-            strpos($full_url, '?') !== false ? '&' : '?'
-            ).http_build_query($query) : '';
+            (
+                strpos($full_url, '?') !== false ? '&' : '?'
+            ).(
+                is_string($query) ? $query : (
+                    isset($query[0]) ? array_shift($query) : ''
+                ).http_build_query($query)
+            )
+        ) : '';
+
+
         $host = parse_url($full_url, PHP_URL_HOST);
         if (!$host) throw new InvalidArgumentException('invalid url: ' . $full_url);
 
@@ -63,7 +73,9 @@ class CurlClient
         curl_setopt($ch, CURLOPT_HEADER, $raw);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // https请求 不验证证书和hosts
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 信任任何证书
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // 检查证书中是否设置域名
+
         curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
 
         // set headers
@@ -103,7 +115,10 @@ class CurlClient
         // set file
         if ($files) {
             array_walk($files, function (&$file) {
-                $file = new CURLFile($file, null, basename($file));
+                $t = pathinfo($file);
+                $file = new CURLFile($file, Mime::getMimeFromExtension(
+                    $t['extension']
+                ), $t['basename']);
             });
             $post = $post ? array_merge($post, $files) : $files;
         } else {
@@ -116,7 +131,13 @@ class CurlClient
             curl_setopt(
                 $ch,
                 CURLOPT_POSTFIELDS,
-                $json ? json_encode($json, JSON_UNESCAPED_UNICODE) : (is_string($post) ? $post : http_build_query($post))
+                $files ? $post : (
+                    $json ? json_encode($json, JSON_UNESCAPED_UNICODE) : (
+                        is_string($post) ? $post : (
+                            isset($post[0]) ? array_shift($post) : ''
+                        ).http_build_query($post)
+                    )
+                )
             );
         }
 
@@ -131,6 +152,12 @@ class CurlClient
         }
 
         curl_close($ch);
+
+
+        if ($charset) {
+            $response = iconv($charset, 'utf-8', $response);
+        }
+
         return $response;
 
     }
